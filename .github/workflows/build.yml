@@ -1,0 +1,74 @@
+name: Build Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start timer
+        run: echo "BEGIN=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build auth service
+        working-directory: authorization-server
+        run: |
+          chmod +x mvnw
+          ./mvnw -DskipTests package
+          
+      - name: Save auth jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-service
+          path: authorization-server/target/*.jar
+
+      - name: Build resource service
+        working-directory: resource-server
+        run: |
+          chmod +x mvnw
+          ./mvnw -DskipTests package
+          
+      - name: Save resource jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: resource-service
+          path: resource-server/target/*.jar
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install frontend packages
+        working-directory: ag-prueba-front
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ag-prueba-front
+        run: npm run build
+
+      - name: Save frontend files
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-ui
+          path: ag-prueba-front/dist/
+
+      - name: Show time and summary
+        run: |
+          FINISH=$(date +%s)
+          TIME=$((FINISH - BEGIN))
+          echo "Build time: ${TIME} seconds"
+          echo "### Build Results" >> $GITHUB_STEP_SUMMARY
+          echo "Time: ${TIME} seconds" >> $GITHUB_STEP_SUMMARY
