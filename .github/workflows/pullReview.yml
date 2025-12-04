@@ -1,0 +1,42 @@
+name: PR Review Time Monitor
+
+on:
+  schedule:
+    - cron: '30 * * * *'  # Cada hora en el minuto 30
+  workflow_dispatch:
+
+jobs:
+  check-pull-requests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v4
+
+      - name: Analyze open pull requests
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const maxReviewHours = 24;  // tiempo máximo en horas
+            const pullRequests = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open"
+            });
+            
+            const currentTime = new Date();
+            
+            for (const pr of pullRequests.data) {
+              const creationTime = new Date(pr.created_at);
+              const hoursOpen = (currentTime - creationTime) / 1000 / 3600;
+              
+              if (hoursOpen >= maxReviewHours - 2) { 
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: `Este pull request lleva ${hoursOpen.toFixed(1)} horas abierto. Límite de review: ${maxReviewHours} horas.`
+                });
+              }
+            }
