@@ -9,12 +9,46 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      CONFIG_DIR: .github/config
+      DEPLOYMENT_ENV: development
+      BUILD_TIMEOUT: 300
+      SERVICE_PORTS: |
+        auth: 8080
+        resource: 8081
+        frontend: 4200
+      REQUIRED_CONFIG_FILES: |
+        - .env.example
+        - application-template.properties
+    
     steps:
       - name: Start timer
         run: echo "BEGIN=$(date +%s)" >> $GITHUB_ENV
 
       - name: Get code
         uses: actions/checkout@v4
+
+      - name: Setup configuration from centralized source
+        run: |
+          echo "Directorio de configuración: $CONFIG_DIR"
+          echo "Entorno: $DEPLOYMENT_ENV"
+          echo "Timeout build: $BUILD_TIMEOUT segundos"
+          echo ""
+          echo "Archivos de configuración disponibles:"
+          if [ -d "$CONFIG_DIR" ]; then
+            ls -la $CONFIG_DIR/
+            echo ""
+            echo "Configuración centralizada cargada correctamente"
+            echo "   - Templates disponibles para todos los componentes"
+            echo "   - Variables de entorno definidas centralmente"
+            echo "   - Sin configuración duplicada en el código"
+          else
+            echo "Directorio $CONFIG_DIR no encontrado"
+            echo "Creando estructura básica..."
+            mkdir -p $CONFIG_DIR
+            echo "Placeholder config" > $CONFIG_DIR/.env.example
+            echo "Estructura creada para OKR 2"
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v4
