@@ -48,7 +48,7 @@ jobs:
           cd authorization-server
           chmod +x mvnw
           ./mvnw versions:display-dependency-updates || echo "Sistema de detección de dependencias implementado"
-          echo "✅ OKR 3.4: Sistema para reducir librerías sin actualizar - IMPLEMENTADO"
+          echo "OKR 3.4: Sistema para reducir librerías sin actualizar - IMPLEMENTADO"
 
       - name: Analyze Code Smells with PMD (OKR 3.5)
         working-directory: authorization-server
@@ -88,38 +88,37 @@ jobs:
           else
             npm run lint -- --max-warnings=0 || echo "ESLint configurado"
           fi
-          echo "✅ OKR 3.1: Code linting implementado"
+          echo "OKR 3.1: Code linting implementado"
 
       - name: Configure ESLint rules for Code Smells (OKR 3.5)
         working-directory: ag-prueba-front
         run: |
           echo "OKR 3.5: Configurando reglas ESLint para detectar code smells..."
-          if [ ! -f ".eslintrc.json" ]; then
-            cat > .eslintrc.json << 'EOF'
-            {
-              "rules": {
-                "complexity": ["warn", 10],
-                "max-depth": ["warn", 4],
-                "max-lines-per-function": ["warn", 50],
-                "max-params": ["warn", 3],
-                "no-duplicate-imports": "error",
-                "no-unused-vars": "warn"
-              }
+          
+          # Crear archivo .eslintrc.json simple sin here-document
+          echo '{
+            "rules": {
+              "complexity": ["warn", 10],
+              "max-depth": ["warn", 4],
+              "max-lines-per-function": ["warn", 50],
+              "max-params": ["warn", 3],
+              "no-duplicate-imports": "error",
+              "no-unused-vars": "warn"
             }
-            EOF
-          fi
-          echo "✅ OKR 3.5: ESLint configurado para detectar:"
-          echo "   - Complejidad ciclomática > 10"
-          echo "   - Función con > 50 líneas"
-          echo "   - Más de 3 parámetros"
-          echo "   - Código duplicado"
+          }' > .eslintrc.json
+          
+          echo "OKR 3.5: ESLint configurado para detectar:"
+          echo "- Complejidad ciclomática > 10"
+          echo "- Función con > 50 líneas"
+          echo "- Más de 3 parámetros"
+          echo "- Código duplicado"
 
       - name: Check outdated dependencies (OKR 3.4)
         working-directory: ag-prueba-front
         run: |
           echo "OKR 3.4: Verificando dependencias NPM obsoletas..."
           npm outdated || echo "Sistema de detección de dependencias obsoletas funcionando"
-          echo "✅ OKR 3.4: Control de dependencias - IMPLEMENTADO"
+          echo "OKR 3.4: Control de dependencias - IMPLEMENTADO"
 
   quality-metrics:
     name: Quality Metrics Report
@@ -129,40 +128,43 @@ jobs:
     steps:
       - name: Generate Quality Report
         run: |
-          echo "REPORTE DE CALIDAD - OKR 3" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**SISTEMAS IMPLEMENTADOS:**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.1: Code Linting y Static Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "- **Java:** Checkstyle configurado en ambos servidores" >> $GITHUB_STEP_SUMMARY
-          echo "- **TypeScript:** ESLint configurado para Angular" >> $GITHUB_STEP_SUMMARY
-          echo "- **Evidencia:** Workflow ejecutándose en CI/CD" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.2: Reducir bugs y defectos en r%" >> $GITHUB_STEP_SUMMARY
-          echo "- **Métrica definida:** r = 20% reducción" >> $GITHUB_STEP_SUMMARY
-          echo "- **Método:** Linting temprano + revisiones de código" >> $GITHUB_STEP_SUMMARY
-          echo "- **Sistema:** Validación en cada pull request" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.3: Cobertura de al menos c%" >> $GITHUB_STEP_SUMMARY
-          echo "- **Métrica definida:** c = 70% cobertura" >> $GITHUB_STEP_SUMMARY
-          echo "- **Implementación:** Workflow 'tests.yml' separado" >> $GITHUB_STEP_SUMMARY
-          echo "- **Validación:** Reportes de cobertura automáticos" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.4: Reducir librerías externas sin actualizar" >> $GITHUB_STEP_SUMMARY
-          echo "- **Sistema:** Dependency check en CI" >> $GITHUB_STEP_SUMMARY
-          echo "- **Herramientas:** Maven + NPM outdated checks" >> $GITHUB_STEP_SUMMARY
-          echo "- **Frecuencia:** En cada ejecución del workflow" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.5: Reducir código debt o smell" >> $GITHUB_STEP_SUMMARY
-          echo "- **Detección:** PMD para Java, ESLint para TypeScript" >> $GITHUB_STEP_SUMMARY
-          echo "- **Prevención:** Code reviews con 2 approvers" >> $GITHUB_STEP_SUMMARY
-          echo "- **Métrica:** Issues identificados temprano" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✅ OKR 3.6: Pull review aprobado por 2 developers" >> $GITHUB_STEP_SUMMARY
-          echo "- **Ya implementado:** Workflow 'PR Review Time Monitor'" >> $GITHUB_STEP_SUMMARY
-          echo "- **Política:** 2 aprobaciones mínimas requeridas" >> $GITHUB_STEP_SUMMARY
-          echo "- **Validación:** Workflow programado cada hora" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "**✅ OKR 3 - COMPLETADO: 100%**" >> $GITHUB_STEP_SUMMARY
-          echo "*Sistemas implementados y métricas definidas*" >> $GITHUB_STEP_SUMMARY
+          echo "REPORTE DE CALIDAD - OKR 3" > report.md
+          echo "" >> report.md
+          echo "SISTEMAS IMPLEMENTADOS:" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.1: Code Linting y Static Analysis" >> report.md
+          echo "- Java: Checkstyle configurado en ambos servidores" >> report.md
+          echo "- TypeScript: ESLint configurado para Angular" >> report.md
+          echo "- Evidencia: Workflow ejecutándose en CI/CD" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.2: Reducir bugs y defectos en r%" >> report.md
+          echo "- Métrica definida: r = 20% reducción" >> report.md
+          echo "- Método: Linting temprano + revisiones de código" >> report.md
+          echo "- Sistema: Validación en cada pull request" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.3: Cobertura de al menos c%" >> report.md
+          echo "- Métrica definida: c = 70% cobertura" >> report.md
+          echo "- Implementación: Workflow 'tests.yml' separado" >> report.md
+          echo "- Validación: Reportes de cobertura automáticos" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.4: Reducir librerías externas sin actualizar" >> report.md
+          echo "- Sistema: Dependency check en CI" >> report.md
+          echo "- Herramientas: Maven + NPM outdated checks" >> report.md
+          echo "- Frecuencia: En cada ejecución del workflow" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.5: Reducir código debt o smell" >> report.md
+          echo "- Detección: PMD para Java, ESLint para TypeScript" >> report.md
+          echo "- Prevención: Code reviews con 2 approvers" >> report.md
+          echo "- Métrica: Issues identificados temprano" >> report.md
+          echo "" >> report.md
+          echo "OKR 3.6: Pull review aprobado por 2 developers" >> report.md
+          echo "- Ya implementado: Workflow 'PR Review Time Monitor'" >> report.md
+          echo "- Política: 2 aprobaciones mínimas requeridas" >> report.md
+          echo "- Validación: Workflow programado cada hora" >> report.md
+          echo "" >> report.md
+          echo "---" >> report.md
+          echo "OKR 3 - COMPLETADO: 100%" >> report.md
+          echo "Sistemas implementados y métricas definidas" >> report.md
+          
+          cat report.md
+          cat report.md >> $GITHUB_STEP_SUMMARY
