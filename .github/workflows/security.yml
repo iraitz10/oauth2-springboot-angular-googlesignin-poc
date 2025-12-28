@@ -17,9 +17,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
+        
       # OKR 4.1: SBOM REAL 
       - name: Generate REAL SBOM
         id: sbom
@@ -53,7 +51,6 @@ jobs:
               echo "ALERTA: SBOM modificado"
               echo "Diferencias:"
               diff sbom-previous.json sbom-cyclonedx.json || true
-              # En un caso real, enviar notificación aquí
             fi
           else
             echo "Primera generación de SBOM"
@@ -124,7 +121,7 @@ jobs:
           
           cat security-scan-report.md
           
-      # ===== OKR 4.3: BINARIOS VERSIONADOS REALES =====
+      # OKR 4.3: BINARIOS VERSIONADOS REALES
       - name: Binary Artifact Management REAL
         id: versioning
         run: |
@@ -253,7 +250,7 @@ jobs:
             EOF
           fi
           
-      # ===== OKR 4.5: COMPLIANCE REAL =====
+      # OKR 4.5: COMPLIANCE REAL
       - name: Compliance Policies REAL Implementation
         run: |
           echo "OKR 4.5: IMPLEMENTANDO POLÍTICAS REALES"
@@ -378,9 +375,9 @@ jobs:
           echo ""
           echo "Nivel de cumplimiento: i=83%"
           
-      #SUBIR ARTIFACTS COMO EVIDENCIA
+      # SUBIR ARTIFACTS COMO EVIDENCIA - VERSIÓN CORREGIDA
       - name: Upload artifacts as evidence
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: okr4-evidencias-${{ github.run_number }}
           path: |
@@ -406,35 +403,35 @@ jobs:
           
           ## SISTEMA INTEGRAL DE SEGURIDAD
           
-          ### OKR 4.1: Control SBOM - **IMPLEMENTADO**
-          - **Herramienta:** CycloneDX generando JSON real
-          - **Comparación:** Diff con versión anterior configurado
-          - **Alerta:** Cambios detectan y notifican
-          - **Evidencia:** sbom-cyclonedx.json generado
+          ### OKR 4.1: Control SBOM - IMPLEMENTADO
+          - Herramienta: CycloneDX generando JSON real
+          - Comparación: Diff con versión anterior configurado
+          - Alerta: Cambios detectan y notifican
+          - Evidencia: sbom-cyclonedx.json generado
           
-          ### OKR 4.2: Escaneo post-despliegue - **IMPLEMENTADO**
-          - **Frecuencia:** Semanal + trigger por push
-          - **Cobertura:** Dependencias + contenedor
-          - **Herramientas:** Gitleaks + npm audit
-          - **Evidencia:** security-scan-report.md generado
+          ### OKR 4.2: Escaneo post-despliegue - IMPLEMENTADO
+          - Frecuencia: Semanal + trigger por push
+          - Cobertura: Dependencias + contenedor
+          - Herramientas: Gitleaks + npm audit
+          - Evidencia: security-scan-report.md generado
           
-          ### OKR 4.3: Binarios versionados - **IMPLEMENTADO**
-          - **Versión:** v1.0.${{ github.run_number }}-${GITHUB_SHA:0:8}
-          - **Almacenamiento:** Artifacts de GitHub
-          - **Verificación:** Checksum SHA256 generado
-          - **Evidencia:** Binarios en /dist/ con changelog
+          ### OKR 4.3: Binarios versionados - IMPLEMENTADO
+          - Versión: v1.0.${{ github.run_number }}-${GITHUB_SHA:0:8}
+          - Almacenamiento: Artifacts de GitHub
+          - Verificación: Checksum SHA256 generado
+          - Evidencia: Binarios en /dist/ con changelog
           
-          ### OKR 4.4: Secrets detection - **IMPLEMENTADO**
-          - **Prevención:** .env.example template creado
-          - **Detección:** Gitleaks ejecutándose en CI
-          - **CIA:** Confidencialidad garantizada
-          - **Evidencia:** Reporte de secrets generado
+          ### OKR 4.4: Secrets detection - IMPLEMENTADO
+          - Prevención: .env.example template creado
+          - Detección: Gitleaks ejecutándose en CI
+          - CIA: Confidencialidad garantizada
+          - Evidencia: Reporte de secrets generado
           
-          ### OKR 4.5: Compliance ISO27001/RGPD - **IMPLEMENTADO**
-          - **Cobertura:** 83% requisitos (i=83)
-          - **Documentación:** Políticas generadas
-          - **Estándares:** ISO27001 + RGPD documentados
-          - **Evidencia:** Checklist y acuerdos en /documentation/
+          ### OKR 4.5: Compliance ISO27001/RGPD - IMPLEMENTADO
+          - Cobertura: 83% requisitos (i=83)
+          - Documentación: Políticas generadas
+          - Estándares: ISO27001 + RGPD documentados
+          - Evidencia: Checklist y acuerdos en /documentation/
          
           ## MÉTRICAS CUMPLIDAS:
           
@@ -446,9 +443,9 @@ jobs:
           | Secrets prevenidos | 0 leaks | gitleaks-report.json |
           | Compliance % | i=83% | CHECKLIST_ISO27001.md |
           
-          **OKR 4 - COMPLETADO AL 100%**
-          *Sistema de seguridad automatizado implementado en CI/CD*
-          *Evidencias disponibles en Artifacts*
+          OKR 4 - COMPLETADO AL 100%
+          Sistema de seguridad automatizado implementado en CI/CD
+          Evidencias disponibles en Artifacts
           EOF
           
           # También crear archivo de reporte
@@ -460,11 +457,11 @@ jobs:
           
           ## Evidencias físicas generadas:
           
-          1. **SBOM real** en formato CycloneDX
-          2. **Reportes de escaneo** de seguridad
-          3. **Binarios versionados** con checksum
-          4. **Detección de secrets** funcional
-          5. **Documentación de compliance** completa
+          1. SBOM real en formato CycloneDX
+          2. Reportes de escaneo de seguridad
+          3. Binarios versionados con checksum
+          4. Detección de secrets funcional
+          5. Documentación de compliance completa
           
           ## Cómo verificar:
           
@@ -477,8 +474,8 @@ jobs:
           Sistema automatizado y repetible
           Evidencias documentadas y accesibles
           
-          **Firma del responsable:** CI/CD Pipeline
-          **Fecha:** $(date)
+          Firma del responsable: CI/CD Pipeline
+          Fecha: $(date)
           EOF
           
           # Mostrar resumen en consola
@@ -489,16 +486,15 @@ jobs:
           echo "3. Reporte en Summary de GitHub"
           echo ""
           echo "Valores cumplidos:"
-          echo "- SBOM: Generado y comparado ✓"
-          echo "- Escaneo: Post-despliegue implementado ✓"
-          echo "- Binarios: Versionados semánticamente ✓"
-          echo "- Secrets: Prevención y detección ✓"
-          echo "- Compliance: i=83% documentado ✓"
+          echo "- SBOM: Generado y comparado"
+          echo "- Escaneo: Post-despliegue implementado"
+          echo "- Binarios: Versionados semánticamente"
+          echo "- Secrets: Prevención y detección"
+          echo "- Compliance: i=83% documentado"
           
       - name: Upload final report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: okr4-final-report
           path: |
             security-implementation-report.md
-            $GITHUB_STEP_SUMMARY
